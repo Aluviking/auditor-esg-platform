@@ -5,15 +5,20 @@ import { useEffect, useState } from "react";
 import {
   LayoutDashboard, Wind, ClipboardList, FileText,
   ShieldCheck, Leaf, LogOut, Building2, Menu, X,
+  Target, BarChart2, AlertTriangle, FileDown,
 } from "lucide-react";
 import clsx from "clsx";
 
 const nav = [
-  { href: "/dashboard",   label: "Dashboard ESG", icon: LayoutDashboard },
-  { href: "/carbon",      label: "Carbon Box",     icon: Wind },
+  { href: "/dashboard",   label: "Dashboard ESG",  icon: LayoutDashboard },
   { href: "/diagnostico", label: "Diagnóstico",    icon: ClipboardList },
-  { href: "/documentos",  label: "Documentos",     icon: FileText },
-  { href: "/auditoria",   label: "Auditoría",      icon: ShieldCheck },
+  { href: "/plan-accion", label: "Plan de Acción",  icon: Target        },
+  { href: "/kpis",        label: "KPIs",            icon: BarChart2     },
+  { href: "/riesgos",     label: "Riesgos",         icon: AlertTriangle },
+  { href: "/reporte",     label: "Reporte ESG",     icon: FileDown      },
+  { href: "/carbon",      label: "Carbon Box",      icon: Wind          },
+  { href: "/documentos",  label: "Documentos",      icon: FileText      },
+  { href: "/auditoria",   label: "Auditoría",       icon: ShieldCheck   },
 ];
 
 export default function Shell({ children }: { children: React.ReactNode }) {
