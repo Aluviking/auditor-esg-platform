@@ -7,6 +7,7 @@ import {
   Leaf, LogOut, Building2, Menu, X, Target, Users,
   Lock, HeartPulse, Scale, BarChart2,
   FileDown, TrendingUp, Brain, RefreshCw, Shield, Settings,
+  Globe, ClipboardCheck, GraduationCap,
 } from "lucide-react";
 import clsx from "clsx";
 import type { Perfil } from "@/app/onboarding/page";
@@ -29,6 +30,9 @@ const MODULE_TAGS: Record<string, string[]> = {
   "/nom035":       ["NOM-035", "bienestar"],
   "/mejora":       ["ISO 9001", "ISO 14001", "ISO 45001", "mejora", "certificacion"],
   "/etica":        ["always"],
+  "/ods":          ["esg", "GRI 2021", "CSRD", "carbon"],
+  "/inspecciones": ["ISO 9001", "ISO 14001", "ISO 45001", "certificacion", "mejora"],
+  "/capacitacion": ["ISO 9001", "ISO 45001", "bienestar", "mejora", "NOM-035"],
 };
 
 const NAV_GROUPS = [
@@ -61,6 +65,14 @@ const NAV_GROUPS = [
       { href: "/nom035",       label: "NOM-035 Psicosocial",     icon: Brain },
       { href: "/mejora",       label: "Mejora Continua",         icon: RefreshCw },
       { href: "/etica",        label: "Canal Ético",              icon: Shield },
+    ],
+  },
+  {
+    label: "Operaciones",
+    items: [
+      { href: "/ods",          label: "ODS / Agenda 2030",       icon: Globe },
+      { href: "/inspecciones", label: "Inspecciones",            icon: ClipboardCheck },
+      { href: "/capacitacion", label: "Capacitación",            icon: GraduationCap },
     ],
   },
 ];
@@ -116,6 +128,7 @@ export default function Shell({ children }: { children: React.ReactNode }) {
       "auditor_legal_lista", "auditor_plan",
       "auditor_kpis", "auditor_nom035",
       "auditor_mejora", "auditor_etica",
+      "auditor_ods", "auditor_inspecciones", "auditor_capacitacion",
     ].forEach(k => localStorage.removeItem(k));
     router.replace("/");
   }

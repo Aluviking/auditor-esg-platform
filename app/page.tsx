@@ -1,7 +1,57 @@
 "use client";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { Leaf, BarChart3, Wind, ClipboardList, ShieldCheck, Eye, EyeOff } from "lucide-react";
+import { Leaf, BarChart3, Wind, ClipboardList, ShieldCheck, Eye, EyeOff, Sparkles } from "lucide-react";
+
+/* ─── Demo data ──────────────────────────────────────────────── */
+const DEMO_DATASETS: Record<string, unknown> = {
+  auditor_company:  "Grupo Industrial RUBIK S.A.",
+  auditor_email:    "gerencia@grupørubik.com.mx",
+  auditor_perfil:   { sector:"Manufactura", empleados:"51 – 250", pais:"México", isos:["ISO 9001","ISO 14001","ISO 45001"], frameworks:["GRI 2021","GHG Protocol"], normas_locales:["NOM-035"], objetivos:["certificacion","carbon","esg","mejora","bienestar","proveedores"] },
+  auditor_diagnostico: { answers:{ a1:"si",a2:"si",a3:"parcial",a4:"si",a5:"parcial",a6:"si", s1:"si",s2:"parcial",s3:"si",s4:"no",s5:"si", g1:"si",g2:"parcial",g3:"si",g4:"si",g5:"parcial", q1:"si",q2:"si",q3:"si",q4:"parcial" }, step:1 },
+  auditor_carbon:   { fields:{ gasolina:"12000",diesel:"4500",gas_natural:"8200",electricidad:"45000",vuelos_corto:"12",vuelos_largo:"4",residuos:"3200" }, calculated:true },
+  auditor_plan:     [
+    { id:"1", title:"Implementar política ambiental ISO 14001",    responsible:"Dir. Ambiental", dueDate:"2025-06-30", progress:75, category:"ambiental" },
+    { id:"2", title:"Capacitar personal en gestión de residuos",   responsible:"RRHH",           dueDate:"2025-04-15", progress:40, category:"ambiental" },
+    { id:"3", title:"Auditoría interna ISO 9001 primer semestre",  responsible:"Calidad",         dueDate:"2025-05-30", progress:100,category:"calidad"   },
+    { id:"4", title:"Evaluación de riesgos psicosociales NOM-035", responsible:"Seguridad",       dueDate:"2025-03-28", progress:20, category:"social"    },
+  ],
+  auditor_kpis: [
+    { id:"1", name:"Emisiones CO₂ totales",           unit:"tCO₂e", current:68,  target:60,  category:"ambiental" },
+    { id:"2", name:"Consumo energético",               unit:"MWh",   current:420, target:400, category:"ambiental" },
+    { id:"3", name:"Satisfacción del cliente",         unit:"%",     current:87,  target:90,  category:"calidad"   },
+    { id:"4", name:"Horas capacitación / empleado",    unit:"hrs",   current:12,  target:20,  category:"social"    },
+    { id:"5", name:"Accidentes registrables",          unit:"casos", current:2,   target:0,   category:"social"    },
+  ],
+  auditor_riesgos_lista: [
+    { id:"1", descripcion:"Incumplimiento de regulación ambiental", area:"Operaciones", norma:"ISO 14001", probabilidad:2,impacto:5, control:"Revisión mensual de normativa",    responsable:"Dir. Ambiental" },
+    { id:"2", descripcion:"Fuga de información confidencial",       area:"TI",          norma:"ISO 27001", probabilidad:3,impacto:4, control:"Política de seguridad de datos",   responsable:"Dir. TI"        },
+    { id:"3", descripcion:"Accidente laboral en producción",        area:"Producción",  norma:"ISO 45001", probabilidad:3,impacto:5, control:"EPP obligatorio, capacitación",    responsable:"Seguridad"      },
+    { id:"4", descripcion:"Proveedor crítico sin capacidad",        area:"Compras",     norma:"ISO 9001",  probabilidad:2,impacto:3, control:"Evaluación semestral proveedores", responsable:"Compras"        },
+  ],
+  auditor_legal_lista: [
+    { id:"1", requisito:"Política ambiental documentada",           norma:"ISO 14001", aplica:"si",      evidencia:"Política AM-001 v2.1",     responsable:"Dir. Ambiental", vencimiento:"2025-12-31" },
+    { id:"2", requisito:"Plan de emergencias actualizado",          norma:"ISO 45001", aplica:"si",      evidencia:"PE-2024 aprobado",          responsable:"Seguridad",      vencimiento:"2025-06-30" },
+    { id:"3", requisito:"Evaluación de riesgo psicosocial NOM-035", norma:"NOM-035",   aplica:"parcial", evidencia:"En proceso Q1 2025",        responsable:"RRHH",           vencimiento:"2025-03-31" },
+    { id:"4", requisito:"Manual de calidad ISO 9001 revisado",      norma:"ISO 9001",  aplica:"si",      evidencia:"MC-2024-v3",                responsable:"Calidad",        vencimiento:"2025-12-31" },
+  ],
+  auditor_indicadores: [
+    { id:"1", nombre:"Tasa de accidentabilidad", actual:1.8, meta:1.0, tendencia:"baja", norma:"ISO 45001",    unidad:"%"         },
+    { id:"2", nombre:"Intensidad de carbono",    actual:42,  meta:35,  tendencia:"baja", norma:"GHG Protocol", unidad:"tCO₂e/M$"  },
+    { id:"3", nombre:"Satisfacción laboral",     actual:78,  meta:85,  tendencia:"alta", norma:"GRI 401",      unidad:"%"         },
+    { id:"4", nombre:"Agua reciclada",           actual:30,  meta:50,  tendencia:"alta", norma:"GRI 303",      unidad:"%"         },
+  ],
+  auditor_mejora: [
+    { id:"1", tipo:"No conformidad",        descripcion:"Registros de capacitación desactualizados",      origen:"Auditoría interna", norma:"ISO 9001",  responsable:"RRHH",           fechaLimite:"2025-04-30", accionCorrectiva:"Actualizar registros en sistema digital", estado:"En proceso",  fechaCreacion:"2025-01-10" },
+    { id:"2", tipo:"Observación",           descripcion:"Señalización de salidas de emergencia deteriorada", origen:"Inspección",        norma:"ISO 45001", responsable:"Mantenimiento",  fechaLimite:"2025-02-28", accionCorrectiva:"Reemplazar señalización sector B",        estado:"Cerrada",     fechaCreacion:"2025-01-15" },
+    { id:"3", tipo:"Oportunidad de mejora", descripcion:"Implementar medición de agua por área productiva",  origen:"Revisión gerencial",norma:"ISO 14001", responsable:"Dir. Ambiental", fechaLimite:"2025-06-30", accionCorrectiva:"Instalar medidores por línea de producción",estado:"Abierta",  fechaCreacion:"2025-01-20" },
+  ],
+  auditor_ods: { seleccionados:["ODS7","ODS8","ODS12","ODS13","ODS16"], iniciativas:[
+    { id:"1", ods:"ODS13", descripcion:"Reducir emisiones CO₂ 15% vs 2024", responsable:"Dir. Ambiental", progreso:40 },
+    { id:"2", ods:"ODS8",  descripcion:"Programa de bienestar laboral integral",responsable:"RRHH",          progreso:60 },
+    { id:"3", ods:"ODS12", descripcion:"Certificar proceso de reciclaje interno", responsable:"Operaciones", progreso:25 },
+  ]},
+};
 
 const features = [
   { icon: BarChart3,    label: "Dashboard ESG",       desc: "KPIs ambientales, sociales y de gobernanza" },
@@ -18,6 +68,13 @@ export default function LoginPage() {
   const [showPass, setShowPass]   = useState(false);
   const [loading, setLoading]     = useState(false);
   const [error, setError]         = useState("");
+
+  function loadDemo() {
+    Object.entries(DEMO_DATASETS).forEach(([key, value]) => {
+      localStorage.setItem(key, typeof value === "string" ? value : JSON.stringify(value));
+    });
+    router.push("/dashboard");
+  }
 
   function handleLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -180,8 +237,21 @@ export default function LoginPage() {
             </button>
           </form>
 
+          {/* Demo */}
+          <div className="mt-6 border-t border-slate-100 pt-5 text-center">
+            <p className="text-xs text-slate-400 mb-2">¿Solo quieres explorar?</p>
+            <button
+              type="button"
+              onClick={loadDemo}
+              className="inline-flex items-center gap-1.5 text-xs font-semibold text-green-600 hover:text-green-500 border border-green-200 hover:border-green-400 rounded-xl px-4 py-2 transition-all"
+            >
+              <Sparkles size={13} />
+              Ver demo con datos de ejemplo
+            </button>
+          </div>
+
           {/* Footer */}
-          <p className="text-center text-xs text-slate-400 mt-8">
+          <p className="text-center text-xs text-slate-400 mt-5">
             Plataforma de consultoría ESG · Versión 1.0
           </p>
         </div>
