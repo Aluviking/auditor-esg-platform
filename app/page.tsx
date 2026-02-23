@@ -33,7 +33,8 @@ export default function LoginPage() {
     localStorage.setItem("auditor_email", email.trim());
 
     setTimeout(() => {
-      router.push("/dashboard");
+      const perfil = localStorage.getItem("auditor_perfil");
+      router.push(perfil ? "/dashboard" : "/onboarding");
     }, 600);
   }
 
