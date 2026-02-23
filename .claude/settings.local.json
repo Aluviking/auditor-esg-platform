@@ -17,7 +17,15 @@
       "Bash(git commit:*)",
       "Bash(git config:*)",
       "Bash(gh repo create:*)",
-      "Bash(git push:*)"
+      "Bash(git push:*)",
+      "Bash(gh run list:*)",
+      "Bash(gh run watch:*)",
+      "Bash(npm run build:*)",
+      "WebFetch(domain:kawak.net)",
+      "WebFetch(domain:www.sabentis.com)",
+      "WebFetch(domain:isolucion.com)",
+      "Bash(git pull:*)",
+      "Bash(git stash:*)"
     ]
   }
 }
